@@ -8,7 +8,7 @@
     buffer   db 6 dup(0),'$' ; Bo dem chuoi nhap so
     lenth    dw 0            ; Do dai chuoi so da nhap
     operand1 db 0            ; Toan tu +, -, *, /, =
-    operand2 db 0            ; Toan tu +, -, *, /, =
+    operand2 db 0            ; Toan tu =
     key      db 0            ; Luu ky tu vua nhap
     xsighn   db 0            ; Danh dau = 1 neu ket qua am
     
