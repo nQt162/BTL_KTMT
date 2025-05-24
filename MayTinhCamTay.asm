@@ -2,15 +2,21 @@
 .stack 100h 
 .data
    
-x_float_count db 0
-x        dw 0    
-y        dw 0
-buffer   db 6 dup(0),'$'
-lenth    dw 0
-operand1 db 0
-operand2 db 0
-key      db 0  
-xsighn   db 0
+    x_float_count db 0       ; Dung de hien thi phan thap phan sau chia
+    x        dw 0            ; toan hang 1
+    y        dw 0            ; toan hang 2
+    buffer   db 6 dup(0),'$' ; Bo dem chuoi nhap so
+    lenth    dw 0            ; Do dai chuoi so da nhap
+    operand1 db 0            ; Toan tu +, -, *, /, =
+    operand2 db 0            ; Toan tu +, -, *, /, =
+    key      db 0            ; Luu ky tu vua nhap
+    xsighn   db 0            ; Danh dau = 1 neu ket qua am
+    
+;---------------------------------------------------   
+
+;error
+;---------------------------------------------------  
+    div0msg db "Div0!$"      ; Thong bao neu chia cho 0                       
 ;---------------------------------------------------
  
 ;print lines
@@ -96,7 +102,7 @@ l1_2:
     jne next_step
     clear buffer       
     putstr buffer          ;in ra chuoi rong , ghi de len man hinh
-    gotoxy 17,3
+    gotoxy 21,3
 
 next_step:
     cmp al, '0'            ; kiem tra xem ki tu co phai la so
@@ -221,7 +227,7 @@ putrez macro buffer,x
    pz1:
        cmp xsighn,1
        jne pz2
-       gotoxy 15,3
+       gotoxy 18,3
        putch '-' , 15
    pz2:
        popa
@@ -243,17 +249,13 @@ endm
 start:
 ; set segment registers:
     mov ax, @data
-    mov ds, ax
-    
- 
-
+    mov ds, ax    
 
 call print_screen    
  
 begin:
       reset
       calc1:
-          
           number_in x,operand1,lenth
           mov al,operand1
           cmp al,'='  
@@ -368,56 +370,64 @@ calculate proc
     je devide
     jmp begin   ;no match found!
 
-            plus:              
-                        mov ax,x
-                        add ax,y                        
-                            mov x,ax
-                            ret                   
+    plus:       
+        mov ax,x
+        add ax,y                        
+        mov x,ax
+        ret                   
                                                                               
-            minus:                                
-                mov ax,x
-                cmp ax,y
-                jae mi3
-                jb mi4
+    minus:                                
+        mov ax,x
+        cmp ax,y
+        jae mi3
+        jb mi4
                 
-                mi3:            ; neu x >= y 
-                    mov ax,x
-                    sub ax,y
-                    mov x,ax
-                    mov xsighn,0
-                    ret
-                mi4:            ; neu x  < y , cho xsighn = 1 de lam dau - ;
-                    mov ax,y
-                    sub ax,x
-                    mov x,ax
-                    mov xsighn,1
-                    ret
-                    
-            mult:
-                    mov ax, x
-                    mov bx, y
-                    mul bx       
-                    mov x, ax
-                    ret
-       
+        mi3:            ; neu x >= y 
+            mov ax,x
+            sub ax,y
+            mov x,ax
+            mov xsighn,0
+            ret
+        mi4:            ; neu x  < y , cho xsighn = 1 de lam dau - ;
+            mov ax,y
+            sub ax,x
+            mov x,ax
+            mov xsighn,1
+            ret
+    mult:
+        mov ax, x
+        mov bx, y
+        mul bx       
+        mov x, ax
+        ret
                    
                             
-            devide:
-                    xor dx, dx
-                    mov ax, x
-                    mov bx, 10
-                    mul bx           
-                    mov bx, y
-                    xor dx, dx
-                    div bx           
-                    mov x, ax        ;
-                    mov x_float_count, 1  ; 
-                    ret                    
+    devide:       
+        cmp y, 0
+        je div0
+                                      
+        xor dx, dx
+        mov ax, x 
+        mov bx, 10
+        mul bx           
+        mov bx, y
+        xor dx, dx
+        div bx           
+        mov x, ax        
+        mov x_float_count, 1  
+        ret                    
+                                   
 calculate endp
-;---------------------------------------------------                           
+;---------------------------------------------------    
+
+div0:
+    gotoxy 15,3            
+    putstr div0msg
+    mov ah, 01h
+    int 21h
+    jmp begin                       
  
 exit:
- 
     mov ax, 4c00h ; exit 
     int 21h    
 ends
