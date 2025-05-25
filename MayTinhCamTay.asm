@@ -7,16 +7,15 @@
     y        dw 0            ; toan hang 2
     buffer   db 6 dup(0),'$' ; Bo dem chuoi nhap so
     lenth    dw 0            ; Do dai chuoi so da nhap
-    operand1 db 0            ; Toan tu +, -, *, /, =
-    operand2 db 0            ; Toan tu =
+    operand1 db 0            ; Toan tu luu +, -, *, /, =
+    operand2 db 0            ; Toan tu luu =
     key      db 0            ; Luu ky tu vua nhap
     xsighn   db 0            ; Danh dau = 1 neu ket qua am
-    
 ;---------------------------------------------------   
 
 ;error
 ;---------------------------------------------------  
-    div0msg db "Div0!$"      ; Thong bao neu chia cho 0                       
+    div0msg db "Div0!$"                             
 ;---------------------------------------------------
  
 ;print lines
@@ -102,7 +101,7 @@ l1_2:
     jne next_step
     clear buffer       
     putstr buffer          ;in ra chuoi rong , ghi de len man hinh
-    gotoxy 21,3
+    gotoxy 17,3
 
 next_step:
     cmp al, '0'            ; kiem tra xem ki tu co phai la so
@@ -227,7 +226,7 @@ putrez macro buffer,x
    pz1:
        cmp xsighn,1
        jne pz2
-       gotoxy 18,3
+       gotoxy 15,3
        putch '-' , 15
    pz2:
        popa
