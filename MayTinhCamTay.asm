@@ -270,6 +270,9 @@ begin:
           putrez buffer,x    ;display result
           mov x_float_count, 0
           mov xsighn,0
+          mov operand1,0
+          mov operand2,0 
+          
           jmp calc1          ;start again for new calculation
  
 
